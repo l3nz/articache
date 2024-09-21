@@ -1,4 +1,6 @@
 defmodule Martcache do
+  require Logger
+
   @moduledoc """
   Documentation for `Martcache`.
   """
@@ -13,6 +15,13 @@ defmodule Martcache do
 
   """
   def hello do
+    Logger.error("ciao")
+
     :world
   end
+
+  @doc """
+  Starts the application.
+  """
+  def up(), do: Martcache.Application.start(0, 0)
 end
