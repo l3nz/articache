@@ -1,2 +1,5 @@
-# articache
-A cache for JAR artifacts
+# MArtCache - Multiple Artifact Cache
+
+A cache for JAR artifacts.
+
+
