@@ -11,7 +11,9 @@ defmodule Martcache.Application do
     children = [
       # Starts a worker by calling: Martcache.Worker.start_link(arg)
       # {Martcache.Worker, arg}
-      {Bandit, plug: Martcache.Router, scheme: :http, port: 3033}
+      {Bandit, plug: Martcache.Router, scheme: :http, port: 3033},
+      #
+      {DynamicSupervisor, name: Martcache.DownloadSupervisor, strategy: :one_for_one}
     ]
 
     Logger.error("Starting #{__MODULE__}")
