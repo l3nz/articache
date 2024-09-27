@@ -13,7 +13,8 @@ defmodule Martcache.Application do
       # {Martcache.Worker, arg}
       {Bandit, plug: Martcache.Router, scheme: :http, port: 3033},
       #
-      {DynamicSupervisor, name: Martcache.DownloadSupervisor, strategy: :one_for_one}
+      {DynamicSupervisor, name: Martcache.DownloadSupervisor, strategy: :one_for_one},
+      {Task.Supervisor, name: Martcache.TaskSupervisor, strategy: :one_for_one}
     ]
 
     Logger.error("Starting #{__MODULE__}")

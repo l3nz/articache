@@ -3,7 +3,7 @@ defmodule Martcache.Router do
   require Logger
   alias Martcache.DownloadSrv
 
-  # curl 'http://127.0.0.1:3033/boss/com/google/gwt/gwt-dev/2.9.0/gwt-dev-2.9.0.jar'
+  # curl 'http://127.0.0.1:3033/boss/jar/com/google/gwt/gwt-dev/2.9.0/gwt-dev-2.9.0.jar'
 
   plug(Plug.Logger)
   plug(:match)
@@ -25,15 +25,31 @@ defmodule Martcache.Router do
     send_resp(conn, 200, "Pluto")
   end
 
-  get "/boss/*package" do
-    %{params: %{"package" => package_parts}} = conn
+  get "/boss/:area/*package" do
+    %{params: %{"package" => package_parts, "area" => area}} = conn
 
-    package = package_parts |> Enum.join("/")
+    file = DownloadSrv.download(area, package_parts)
 
-    file = DownloadSrv.download("https://repo1.maven.org/maven2/#{package}")
+    case file do
+      nil ->
+        send_resp(conn, 404, "not found")
+
+      f ->
+        with %File.Stat{size: sz} = File.stat!(f) do
+          Logger.info("Sending #{f} with size #{sz}")
+          send_file(conn, 200, f)
+        end
+    end
+  end
+
+  head "/boss/:area/*package" do
+    %{params: %{"package" => package_parts, "area" => area}} = conn
+
+    file = DownloadSrv.download(area, package_parts)
     %File.Stat{size: sz} = File.stat!(file)
+    Logger.info("Heading #{file} with size #{sz}")
 
-    send_resp(conn, 200, "File: #{file} with size #{sz}")
+    send_resp(conn, 200, "Pluto")
   end
 
   match _ do

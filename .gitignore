@@ -24,3 +24,10 @@ martcache-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+
+# where downlaods are kept
+dl/
+*.jar
+
+
