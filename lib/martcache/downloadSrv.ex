@@ -2,7 +2,13 @@ defmodule Martcache.DownloadSrv do
   use GenServer
   require Logger
 
-  @prefixes ["https://repo3.maven.org/maven2", "https://repo1.maven.org/maven2"]
+  @prefixes [
+    "https://repo3.maven.org/maven2",
+    "https://repo1.maven.org/maven2",
+    "https://plugins.gradle.org/m2",
+    "http://aleph.loway.ch/maven",
+    "https://registry.npmjs.org"
+  ]
 
   # client
 
@@ -56,9 +62,9 @@ defmodule Martcache.DownloadSrv do
         _from,
         %{area: area, filepath: filepath, prefixes: prefixes} = state
       ) do
-    try do
-      expected_path = dl_path_for(filepath, area)
+    expected_path = dl_path_for(filepath, area)
 
+    try do
       url =
         if !File.exists?(expected_path) do
           # lo scarico
@@ -73,9 +79,9 @@ defmodule Martcache.DownloadSrv do
       end
 
       {:reply, expected_path, %{state | file_name: expected_path, url: url}}
-    catch
+    rescue
       e ->
-        with Logger.error("Crashing #{inspect(e)}") do
+        with Logger.error("Crashing #{inspect(e)} - for #{expected_path}") do
           {:stop, :normal, nil, state}
         end
     end
